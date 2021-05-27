@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>promise</title>
+</head>
+<body>
+    <script>
+        // Promise用在處理非同步的狀況
+        new Promise((resolve, reject) => {
+                const rnd = Math.random() * 1500;
+                setTimeout(function () {
+                    resolve('1:' + rnd);
+                    // reject('error-----');
+                }, rnd);
+            })
+                .then(r => {
+                    console.log(r);
+                    // 自己創造throw一個錯誤
+                    throw new Error('my error');
+                })
+                // .catch()接下錯誤
+                .catch(err => {
+                    console.log(err);
+                });
+
+                // promise 以外要用 try{}catch(ex){}
+    </script>
+</body>
+</html>

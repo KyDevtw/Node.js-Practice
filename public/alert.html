@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+</head>
+<body>
+    <div id="info"></div>
+    <script>
+        document.querySelector('#info').innerHTML = `<h2>Hello</h2>`;
+        alert('你好'); // alert, comfirm, prompt 只要執行就會讓主執行緒卡住停止
+    </script>
+</body>
+</html>
