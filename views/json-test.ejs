@@ -1,0 +1,35 @@
+<!-- include只能使用相對路徑 -->
+<!-- include可以不用加附檔名，.ejs 副檔名可以省略 -->
+<!-- 樣板只能include樣板 -->
+<!-- 使用減號，html標籤才不會被跳脫 -->
+<%- include('parts/html-head') %>
+    <%- include('parts/navbar') %>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">員工編號</th>
+                    <th scope="col">姓名</th>
+                    <th scope="col">年齡</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- for of 寫法(只能用在陣列) -->
+                <% for(let i of sales){ %>
+                    <tr>
+                        <td>
+                            <%= i.id %>
+                        </td>
+                        <td>
+                            <%= i.name %>
+                        </td>
+                        <td>
+                            <%= i.age %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+
+        <%- include('parts/scripts') %>
+            <%- include('parts/html-foot') %>

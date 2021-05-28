@@ -1,0 +1,19 @@
+
+<!-- include只能使用相對路徑 -->
+<!-- include可以不用加附檔名，.ejs 副檔名可以省略 -->
+<!-- 樣板只能include樣板 -->
+<!-- 使用減號，html標籤才不會被跳脫 -->
+<%- include('parts/html-head') %>
+<%- include('parts/navbar') %>
+
+<div class="container">
+    <h2>
+        <!-- name在樣板中被視為變數 -->
+        <!-- 給值在伺服器設定中設定 -->
+        <!-- EJS標籤前後建議空格 -->
+    <%= name %>
+    </h2>
+</div>
+
+<%- include('parts/scripts') %>
+<%- include('parts/html-foot') %>
