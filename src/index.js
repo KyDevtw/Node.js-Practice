@@ -9,6 +9,12 @@ const express = require('express');
 
 const app = express();
 
+const multer = require("multer"); // 載入 multer
+const upload = multer({ dest: "tmp_uploads/" }); // 設定上傳暫存目錄
+
+const { v4: uuidv4 } = require("uuid"); // 載入 uuid
+const fs = require("fs"); // 載入 file system
+
 // 註冊EJS樣板引擎
 // 要放在所有路由之前
 app.set('view engine', 'ejs');
@@ -68,8 +74,46 @@ app.post("/try-post", (req, res) => {
 app.get("/try-post-form", (req, res) => {
   res.render("try-post-form", { email: "", password: "" });
 });
+
 app.post("/try-post-form", (req, res) => {
   res.render("try-post-form", req.body);
+});
+
+const extMap = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/gif": ".gif",
+};
+
+app.get("/try-upload", (req, res) => {
+  res.render("try-upload");
+});
+
+// 上傳名稱填在single後，single表只上傳一個檔案
+app.post("/try-upload", upload.single("avatar"), async (req, res) => {
+  console.log(req.file);
+
+  let newName = "";
+  if (extMap[req.file.mimetype]) {
+    newName = uuidv4() + extMap[req.file.mimetype];
+    await fs.promises.rename(req.file.path, "./public/img/" + newName);
+  }
+
+  res.json({
+    file: req.file,
+    body: req.body,
+    newName,
+  });
+});
+
+// 上傳多檔使用.array 第二個欄位為最大數量
+app.post("/try-uploads", upload.array("photo",6), (req, res) => {
+  console.log(req.files); // 使用複數 files
+  res.json({
+    file: req.files, // 使用複數 files
+    // 當表單還有其他文字欄位時可以包成一個object
+    body: req.body,
+  });
 });
 
 
