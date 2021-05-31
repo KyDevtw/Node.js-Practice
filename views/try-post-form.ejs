@@ -1,0 +1,49 @@
+<!-- include只能使用相對路徑 -->
+<!-- include可以不用加附檔名，.ejs 副檔名可以省略 -->
+<!-- 樣板只能include樣板 -->
+<!-- 使用減號，html標籤才不會被跳脫 -->
+<%- include('parts/html-head') %>
+    <%- include('parts/navbar') %>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">表單測試</h5>
+                            <!-- novalidate 就不會檢查 form 的 required -->
+                            <form method="post" novalidate>
+                                <div class="form-group">
+                                    <label for="email">Email address</label>
+                                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                                    <!-- locals是樣板預設物件 -->
+                                    <% if(typeof email !=='undefined' ){ %>
+                                        <small>上次輸入: <%= email %></small>
+                                        <% } %>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder=""  placeholder="Password">
+                                    <% if(locals.password){ %>
+                                        <small>上次輸入: <%= password %></small>
+                                        <% } %>
+                                </div>
+                                <div class="form-group form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1" name="exampleCheck1" value="1">
+                                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                                </div>
+                                <div class="form-group form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1" name="exampleCheck1" value="2">
+                                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('parts/scripts') %>
+            <%- include('parts/html-foot') %>

@@ -22,6 +22,13 @@ app.use(express.static("public"));
 // 也可以寫成 app.use(express.static(__dirname + '/../public'));
 
 
+// 透過哪個middleware解析由header進行判斷
+// Top-level middleware寫法
+app.use(express.urlencoded({ extended: false }));
+// 解析 json 格式
+app.use(express.json());
+
+
 // 路由設定，路由開始
 // get是使用get方法發送的 request
 // 第一個參數，斜線寫的是路徑
@@ -39,6 +46,30 @@ app.get("/json-test", (req, res) => {
 
 app.get("/try-qs", (req, res) => {
   res.json(req.query);
+});
+
+// extended: false 不使用qs lib, 而使用內建的querystring lib
+// extended: true 使用qs lib, 不使用內建的querystring lib
+// function 本身就是一個特殊型態的物件
+// function.method = a => a*a*a 自訂 function 的 method
+// 要查看的物件 instanceof 資料型態 可以確認物件是否為某一資料型態並回傳布林值
+// 變數constructor.name 可以回傳資料類型的名稱
+
+
+// top-level middleware 預先寫法不用宣告 下列程式碼，post 路徑之後也不用放變數（app.post('/try-post-form', urlencodedParser, (req, res)）
+// const urlencodedParser = express.urlencoded({ extended: false }); // 設定middleware 中介軟體
+
+// middleware 會從request解析，然後放到request的body內
+// body-parser只能處理 application/x-www-form-urlencoded 格式 
+app.post("/try-post", (req, res) => {
+  res.json(req.body);
+});
+
+app.get("/try-post-form", (req, res) => {
+  res.render("try-post-form", { email: "", password: "" });
+});
+app.post("/try-post-form", (req, res) => {
+  res.render("try-post-form", req.body);
 });
 
 

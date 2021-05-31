@@ -1,0 +1,25 @@
+GET http://localhost:3001/
+
+### http的header與body中間會帶有一行分隔行
+
+GET http://localhost:3001/try-qs?a[name]=bill&a[age]=25
+
+###
+
+### POST測試方法，設定key=value前要空一行
+POST http://localhost:3001/try-post
+Content-Type: application/x-www-form-urlencoded
+
+name=david&age=30
+
+
+### POST測試json
+### json所有字串都要使用雙引號 ""
+
+POST http://localhost:3001/try-post
+Content-Type: application/json; charset=utf-8
+
+{
+    "name":"david",
+    "age": 28
+}

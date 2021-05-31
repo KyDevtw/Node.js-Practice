@@ -7,7 +7,10 @@
     <title>Title</title>
 </head>
 <body>
-    <form action="" method="post">
+    <!-- method 預設是get -->
+    <!-- body-parser只能處理 application/x-www-form-urlencoded 格式 -->
+    <form action="try-post" method="post" enctype="application/x-www-form-urlencoded">
+        <!-- 表單一定要下name，不然回傳時會被略 -->
         <input type="text" name="nickname" id="">
         <br>
         <input type="submit" name="" id="">
