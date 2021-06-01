@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="fontawesome/css/all.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- novalidate 就不會檢查 form 的 required -->
+        <!-- return false跟  event.preventDefault()有一樣效果 -->
+        <!-- 在屬性中設定事件，事件會被包成一個function -->
+        <!-- 在console中選取元素可以用document.元素.name連鎖選取 -->
+        <form name="form1" method="post" novalidate onsubmit="send(); return false;">
+            <div class="form-group">
+                <label for="avatar">大頭貼</label>
+                <input type="file" class="form-control" id="avatar" name="avatar">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <br>
+        <img src="" alt="" id="myimg">
+        
+        </div>
+    <script src="lib/jquery-3.6.0.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.js"></script>
+    <script>
+        const send = () => {
+
+
+            // FormData 沒有外觀的表單
+            // fetch('發送對象',設定)
+            // fetch 一定會兩個 then 除非改成 async await
+            const fd = new FormData(document.form1);
+
+            fetch('/try-upload', {
+                method: 'POST',
+                body: fd,
+            })
+                .then(r => r.json())
+                .then(obj => {
+                    console.log(obj);
+                    if (obj.filename) {
+                        myimg.src = '/img/' + obj.filename;
+                    }
+                });
+
+            // $.ajax({
+            //     url: '/try-upload',
+            //     type: 'POST',
+            //     success: function(data) {
+            //         console.log(data);
+            //     };
+            //     error: function (data) {
+
+            //     };
+            //     data: fd,
+            //     cache: false, 
+            //     contentType: false, 
+            //     processData:  false,
+            //     timeout: 60000
+                
+            // });
+
+
+            // 以下只能傳送文字表單資料
+            // $.post('/try-post', $(document.form1).serialize(), function (data) {
+            //     console.log(data);
+            //     info.innerHTML += JSON.stringify(data) + '<br>';
+            // }, 'json');
+
+
+
+        };
+    </script>
+</body>
+
+</html>

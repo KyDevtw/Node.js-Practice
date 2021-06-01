@@ -9,10 +9,12 @@ const express = require('express');
 
 const app = express();
 
+// const upload = require(__dirname + '/modules/upload-img'); 有了 upload-img.js 可以用這行取代下列三行
 const multer = require("multer"); // 載入 multer
 const upload = multer({ dest: "tmp_uploads/" }); // 設定上傳暫存目錄
-
 const { v4: uuidv4 } = require("uuid"); // 載入 uuid
+
+
 const fs = require("fs"); // 載入 file system
 
 // 註冊EJS樣板引擎
@@ -79,11 +81,13 @@ app.post("/try-post-form", (req, res) => {
   res.render("try-post-form", req.body);
 });
 
-const extMap = {
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/gif": ".gif",
-};
+
+// 有寫 upload-img.js 可不用在這邊寫
+// const extMap = {
+//   "image/jpeg": ".jpg",
+//   "image/png": ".png",
+//   "image/gif": ".gif",
+// };
 
 app.get("/try-upload", (req, res) => {
   res.render("try-upload");
@@ -93,16 +97,16 @@ app.get("/try-upload", (req, res) => {
 app.post("/try-upload", upload.single("avatar"), async (req, res) => {
   console.log(req.file);
 
-  let newName = "";
-  if (extMap[req.file.mimetype]) {
-    newName = uuidv4() + extMap[req.file.mimetype];
-    await fs.promises.rename(req.file.path, "./public/img/" + newName);
-  }
+  // let newName = "";
+  // if (extMap[req.file.mimetype]) {
+  //   newName = uuidv4() + extMap[req.file.mimetype];
+  //   await fs.promises.rename(req.file.path, "./public/img/" + newName);
+  // }
 
+  // JSON處理空值會忽略
   res.json({
-    file: req.file,
+    filename: req.file && req.file.filename,
     body: req.body,
-    newName,
   });
 });
 
@@ -126,6 +130,20 @@ app.get("/form01.html", (req, res) => {
 // 可以使用postman測試各種方法回傳的值
 app.post("/", (req, res) => {
   res.send("POST 你好");
+});
+
+// !越特殊的路由放越前面，越寬鬆的放越後面
+// : 冒號之後為代稱名
+app.get("/my-params1/:action/:id", (req, res) => {
+  res.json(req.params);
+});
+// 前述代稱可有可以使用?
+app.get("/my-params2/:action?/:id?", (req, res) => {
+  res.json(req.params);
+});
+// wildcard為*
+app.get("/my-params3/*/*?", (req, res) => {
+  res.json(req.params);
 });
 
 
