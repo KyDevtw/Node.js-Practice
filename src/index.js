@@ -5,9 +5,12 @@ require("dotenv").config();
 // 引入 port number
 const port = process.env.PORT || 3000;
 
-const express = require('express');
+const express = require('express'); // JS中 require如果已經載入過一次就不會再載入
 
 const app = express();
+const session = require("express-session"); // require session套件
+
+express.kurt = '卡特'; // js任何東西都可以動態設定，可以設定自己的屬性
 
 // const upload = require(__dirname + '/modules/upload-img'); 有了 upload-img.js 可以用這行取代下列三行
 const multer = require("multer"); // 載入 multer
@@ -21,6 +24,21 @@ const fs = require("fs"); // 載入 file system
 // 要放在所有路由之前
 app.set('view engine', 'ejs');
 // 如果資料夾名稱不用views 使用 app.set('views', __dirname + '/../資料夾名稱');
+
+//! 設定session
+app.use(
+  session({
+    // 新用戶沒有使用到session 物件時不會建立session 和發送cookie
+    saveUninitialized: false, // 沒有初始化時是否儲存
+    resave: false, // 沒變更內容是否強制回存
+    secret: "sfkjgwo445t9pu0wejrlgjrocijpte", // 加密的字串
+    cookie: {
+      maxAge: 1200000, // 20分鐘，單位毫秒
+    },
+  })
+);
+
+
 
 // 使用靜態內容的資料夾，寫在所有路由的前面
 // 啟動node的路徑往下看直接有 public 資料夾就不用使用 __dirname
@@ -37,7 +55,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 
-// 路由設定，路由開始
+// 自行定義 middleware
+app.use((req, res, next)=>{
+  res.locals.admin = req.session.admin || {}; //? 把session登入的資料放到locals，如果沒有就丟空物件給locals
+  // res.locals = {
+  //   email: "這是預設 email",
+  //   password: "這是預設 password",
+  // };
+
+  next(); // 引發下一個程式執行，後面可以再接middleware
+});
+
+
+// !路由設定，路由開始
+
 // get是使用get方法發送的 request
 // 第一個參數，斜線寫的是路徑
 app.get("/", (req, res) => {
@@ -74,6 +105,11 @@ app.post("/try-post", (req, res) => {
 });
 
 app.get("/try-post-form", (req, res) => {
+  res.locals = {
+    // 進入template的變數都掛在 locals身上
+    email: "這是預設 email",
+    password: "這是預設 password",
+  };
   res.render("try-post-form", { email: "", password: "" });
 });
 
@@ -144,6 +180,90 @@ app.get("/my-params2/:action?/:id?", (req, res) => {
 // wildcard為*
 app.get("/my-params3/*/*?", (req, res) => {
   res.json(req.params);
+});
+
+// 可以使用正規表達式（前後先用/包起）
+app.get(/\/m\/09\d{2}-?\d{3}-?\d{3}$/i, (req, res) => {
+  // res.send(req.url);
+  let u = req.url.slice(3); // 去除 m 
+  u = u.split("?")[0]; // 透過問號切割，去除 query string
+  u = u.replace(/-/g,''); // replace.(搜尋字元，可以用正規表達式或字串,代替字元)
+  u = u.split("-").join(""); // 透過 dash 切割，改以空字串代替
+  res.send(`<h2>${u}</h2>`);
+});
+
+// 引入模組化路由
+// 可以直接使用app.use(放入require()內部不用再加;)
+const admin2Router = require(__dirname + '/routes/admin2');
+app.use(admin2Router); //當成middleware 使用
+// use可以在路由前再加一段，整個路徑在網址輸入時再加入該路徑（4.5.5路由模組化方法三）
+// TODO app.use('/admin3',admin2Router);
+
+
+//! SESSION 示範
+app.get("/try-session", (req, res) => {
+  req.session.my_var = req.session.my_var || 0; // 預設為0
+  req.session.my_var++;
+  res.json({
+    my_var: req.session.my_var,
+    session: req.session,
+  });
+});
+
+
+//! 登入功能
+app.get("/login", (req, res) => {
+  if(req.session.admin){ // session 有 admin 就是等入狀態
+    res.redirect("/"); // 若是登入狀態直接轉到首頁
+    }else{
+    res.render("login");
+  };
+});
+
+app.post("/login", (req, res) => {
+  // ?資料庫還沒教，先寫死
+  const account = {
+    Kurt: {
+      nickname: "Kurt",
+      pw: "123",
+    },
+    Shin: {
+      nickname: "Xiaoxin",
+      pw: "321",
+    },
+  };
+  const output ={
+    success: false,
+    code: 12,
+    error:'帳號密碼錯誤',
+    body: req.body, // 除錯檢查 body
+  };
+
+  if(req.body && req.body.account && account[req.body.account]){
+    output.code = 100; // 透過 code 確認是哪一步錯誤
+    const item = account[req.body.account];
+    // ? 關係運算子 ( === ) 優先權高於邏輯運算子，!NOT 單元運算子優先權最高
+    if (req.body.password && req.body.password === item.pw) {
+      output.code = 200;
+      // 把帳號資訊丟入session
+      req.session.admin = {
+        account: req.body.account,
+        ...item
+      };
+      output.success = true;
+      output.error = '';
+      output.code = 200;
+
+    };
+  };
+
+
+
+  res.json(output);
+});
+app.get("/logout", (req, res) => {
+  delete req.session.admin; // delete 刪除物件屬性 (req.session 的 admin 屬性)
+  res.redirect("/"); //! / 斜線是根目錄 redirect重新導向
 });
 
 

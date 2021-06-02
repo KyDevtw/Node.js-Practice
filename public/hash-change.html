@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a Tag</title>
+    <style>
+        #info{
+            position: fixed;
+            top: 0;
+            right: 0;
+        }
+        .box{
+            position: relative;
+            width: 500px;
+            height: 800px;
+            background-color: #afa;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="info">
+        <a href="#aaa">aaa</a><br>
+        <a href="#bbb">bbb</a><br>
+        <a href="#ccc">ccc</a><br>
+    </div>
+    <div class="box" id="aaa">aaa</div>
+    <div class="box" id="bbb" style="background-color: #6fbed6;">bbb</div>
+    <div class="box" id="ccc" style="background-color: #5bc572;">ccc</div>
+
+    <script>
+        function hashHandler(){
+            let h = location.hash.slice(1);
+            if(h.length<2){
+                h = 'aaa'; 
+            }else{
+                h = h.slice(1);
+            };
+            console.log(h);
+
+        };
+        // 變更 hush 會觸發 hashchange
+        window.addEventListener('hashchange', hashHandler);
+        hashHandler(); // 直接執行一次
+    </script>
+</body>
+
+</html>

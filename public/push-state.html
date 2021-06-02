@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a Tag</title>
+</head>
+
+<body>
+    <button onclick="p()">test push state</button>
+
+    
+    <script>
+        flet i = 1;
+            function p() {
+                history.pushState({
+                    name: 'peter',
+                    age: ++i,
+                }, '', 'myurl-' + i);
+            }
+
+            window.onpopstate = function (event) {
+                console.log(event.state);
+            };
+    </script>
+</body>
+
+</html>

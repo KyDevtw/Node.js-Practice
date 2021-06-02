@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a Tag</title>
+</head>
+<body>
+    <!-- ! a連結 href 跟 onClick 不要同時混用，onClick會先觸發 -->
+    <!-- ? 或是使用 href=" javascript: func();"-->
+    <a href="http://tw.yahoo.com">yahoo</a>
+    <a href="http://tw.yahoo.com" onclick="return confirm('是否要到Yahoo');">yahoo 2</a>
+
+    <script>
+        const func = ()=>{
+            console.log("Hello");
+        };
+        document.querySelector('a').addEventListener('click', (event)=>{
+            event.preventDefault();
+            func();
+        });
+
+    </script>
+</body>
+</html>
