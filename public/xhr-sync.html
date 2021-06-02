@@ -17,11 +17,12 @@
     <script>
         function send() {
                 const xhr = new XMLHttpRequest();
-
+                // 由 XMLHttpRequest（XHR）物件的方式來存取伺服器端的資料，可以讓你直接經由指定的 URL 擷取資料卻不用刷新整個網頁。這樣一來當想要更新網頁中的部分資料時，不再需要藉由刷新整個頁面的方法而中斷使用者的操作。
                 xhr.addEventListener('load', function (event) {
                     console.log(xhr.responseText);
                 });
-                xhr.open('GET', '/pending', false); // flase 是非同步 true是同步，JS主要是非同步，切true 會卡住其他程式運行
+                // open 要使用哪種方法，連線到的位置，同步或非同步
+                xhr.open('GET', '/pending', false); // flase 是非同步 true是同步，JS主要是非同步，切true 會卡住其他程式運行，預設值是true
                 xhr.send();
 
             }
