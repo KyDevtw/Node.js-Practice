@@ -10,6 +10,8 @@ const express = require('express'); // JS中 require如果已經載入過一次�
 const app = express();
 const session = require("express-session"); // require session套件
 
+const db = require(__dirname + "/modules/mysql2-connect"); // 引入資料庫
+
 express.kurt = '卡特'; // js任何東西都可以動態設定，可以設定自己的屬性
 
 // const upload = require(__dirname + '/modules/upload-img'); 有了 upload-img.js 可以用這行取代下列三行
@@ -19,6 +21,8 @@ const { v4: uuidv4 } = require("uuid"); // 載入 uuid
 
 
 const fs = require("fs"); // 載入 file system
+
+const moment = require('moment-timezone') // 載入 moment-timezone
 
 // 註冊EJS樣板引擎
 // 要放在所有路由之前
@@ -266,6 +270,37 @@ app.get("/logout", (req, res) => {
   res.redirect("/"); //! / 斜線是根目錄 redirect重新導向
 });
 
+
+app.get("/try-moment", (req, res) => {
+  const fm = "YYYY-MM-DD HH:mm:ss";
+  const mo1 = moment(req.session.cookie.expires);
+  const mo2 = moment(new Date());
+  const m1 = moment(new Date());
+  const m2 = moment("2021-03-15"); // 時間也可以用字串表示，但必須用ISO標準格式撰寫
+  res.json({
+    "local-mo1": mo1.format(fm),
+    "local-mo2": mo2.format(fm),
+    // tz指定時區再做時間輸出，沒有指定以系統local做時區輸出
+    "london-mo1": mo1.tz("Europe/London").format(fm), // ?時區格式："五大洲/城市"
+    "london-mo2": mo2.tz("Europe/London").format(fm),
+    t1: m1.format(fm),
+    t1a: m1.tz("Europe/London").format(fm),
+    t2: m2.format(fm),
+    t2a: m2.tz("Europe/London").format(fm),
+  });
+});
+
+app.get("/try-db", (req, res) => {
+  db.query("SELECT * FROM `address_book` LIMIT 5") // 使用 .query 方式會包成 promise 物件
+    .then(([r]) => { // promise 物件用 then 處理，pormise 只會回傳一個值，多個值會包成陣列，小括弧就不能省略
+      res.json(r);
+    })
+    .catch((error) => { // 有錯誤的話用catch接起來
+      res.send(error);
+    });
+});
+
+app.use("/address-book", require(__dirname + "/routes/address-book"));
 
 // 自訂404頁面，放在路由開始後
 // node.js 路由先訂的優先所以 404 的定義要放在所有路由後
