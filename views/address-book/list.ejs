@@ -1,0 +1,104 @@
+<!-- include只能使用相對路徑 -->
+<!-- include可以不用加附檔名，.ejs 副檔名可以省略 -->
+<!-- 樣板只能include樣板 -->
+<!-- 使用減號，html標籤才不會被跳脫 -->
+<%- include('../parts/html-head') %>
+    <%- include('../parts/navbar') %>
+
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+
+                            <!-- ?當 totalPages = page 多 disabled 屬性值 -->
+                            <li class="page-item <%= 1===page ? 'disabled' : '' %>"><a class="page-link" href="?page=<%= page-1 %>">Previous</a></li>
+
+                            <% for(let i=1; i<=totalPages; i++){ %>
+                                <!-- ? 當page等於現有頁數新增屬性 -->
+                                <li class="page-item <%= i===page ? 'active' : '' %>">
+                                    <!-- ?queryString取得頁數 -->
+                                    <a class="page-link" href="?page=<%= i %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                            <% } %>
+                            <!-- ?當 totalPages = page 多 disabled 屬性值 -->
+                            <li class="page-item <%= totalPages===page ? 'disabled' : '' %>"><a class="page-link" href="?page=<%= page+1 %>">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">姓名</th>
+                                <th scope="col">信箱</th>
+                                <th scope="col">手機</th>
+                                <th scope="col">生日</th>
+                                <th scope="col">地址</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i of rows){ %>
+                                <tr>
+                                    <td>
+                                        <%= i.sid %>
+                                    </td>
+                                    <td>
+                                        <%= i.name %>
+                                    </td>
+                                    <td>
+                                        <%= i.email %>
+                                    </td>
+                                    <td>
+                                        <%= i.mobile %>
+                                    </td>
+                                    <td>
+                                        <%= i.birthday %>
+                                    </td>
+                                    <td>
+                                        <!-- !用等號會跳脫字元，把script當成字串輸出-->
+                                        <%= i.address %>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                
+                            <!-- ?當 totalPages = page 多 disabled 屬性值 -->
+                            <li class="page-item <%= 1===page ? 'disabled' : '' %>"><a class="page-link" href="?page=<%= page-1 %>">Previous</a></li>
+
+                            <!-- ?限制頁碼範圍 -->
+                            <% for(let i=page-5; i<=page+5; i++) 
+                                if(i>=1 && i<=totalPages) { %>
+                            <li class="page-item <%= i===page ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+
+                            <!-- ?當 totalPages = page 多 disabled 屬性值 -->
+                            <li class="page-item <%= totalPages===page ? 'disabled' : '' %>"><a class="page-link" href="?page=<%= page+1 %>">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            
+        </div>
+
+<%- include('../parts/scripts') %>
+<%- include('../parts/html-foot') %>

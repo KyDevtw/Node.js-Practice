@@ -10,7 +10,13 @@ const express = require('express'); // JS中 require如果已經載入過一次�
 const app = express();
 const session = require("express-session"); // require session套件
 
+// !(session) 是指 require("express-session") 的參數
+const MysqlStore = require("express-mysql-session")(session); // 要寫在 require("express-session") 之後
+
+
 const db = require(__dirname + "/modules/mysql2-connect"); // 引入資料庫
+
+const sessionStore = new MysqlStore({}, db); // 透過 MysqlStore 建立 sessionStore
 
 express.kurt = '卡特'; // js任何東西都可以動態設定，可以設定自己的屬性
 
@@ -36,6 +42,7 @@ app.use(
     saveUninitialized: false, // 沒有初始化時是否儲存
     resave: false, // 沒變更內容是否強制回存
     secret: "sfkjgwo445t9pu0wejrlgjrocijpte", // 加密的字串
+    store: sessionStore, // session 存資料庫優點：不會因為伺服器重啟遺失 session
     cookie: {
       maxAge: 1200000, // 20分鐘，單位毫秒
     },
