@@ -4,6 +4,8 @@ const moment = require("moment-timezone");
 
 const db = require(__dirname + "/../modules/mysql2-connect"); // 也可以寫在index內
 
+const upload = require(__dirname + "/../modules/upload-img"); // 使用 fetch 上傳時新增 middleware
+
 const router = express.Router(); // Router()是express的function
 
 const getListData = async (req,) =>{
@@ -108,7 +110,9 @@ router.post("/add", async (req, res) => {
 
 // ! SET?寫法
 // ! 如果input有不輸入資料庫的隱藏欄位，會INSERT失敗
-router.post("/add", async (req, res) => {
+// !使用 fetch 要新增 upload middleware，none表示沒有要上傳資料，但仍會解析表單
+
+router.post("/add", upload.none() ,async (req, res) => {
   // TODO: 輸入的資料檢查
 
   let output = {
@@ -135,6 +139,58 @@ router.post("/add", async (req, res) => {
   output = {...output, body: req.body};
   res.json(output);
 });
+
+// ?刪除功能路由
+router.get("/del/:sid", async (req, res) => {
+  // return res.json([req.get('Referer'), req.headers]); // 測試查看 Referer
+
+  const sql = "DELETE FROM `address_book` WHERE sid=?";
+  await db.query(sql, [req.params.sid]);
+
+  // ? referer 的檔頭會記錄從哪個頁面連過來的，如果是直接輸入網址不會生成這一個值
+  if (req.get("Referer")) {
+    res.redirect(req.get("Referer"));
+  } else {
+    res.redirect("/address-book/list");
+  }
+});
+
+
+// ?修改功能路由
+router.get("/edit/:sid", async (req, res) => {
+  const sql = "SELECT * FROM address_book WHERE sid=?";
+  const [rs] = await db.query(sql, [req.params.sid]);
+
+  // 如果沒有找到資料就轉向到列表頁
+  if (!rs.length) {
+    return res.redirect("/address-book/list");
+  }
+  rs[0].birthday = moment(rs[0].birthday).format("YYYY-MM-DD"); // 把時間格式轉換成正確的資料
+  res.render("address-book/edit", rs[0]);
+});
+
+router.post("/edit/:sid", upload.none(), async (req, res) => {
+  let output = {
+    success: false,
+    type: "danger",
+    error: "",
+    results: {},
+  };
+  const sql = "UPDATE `address_book` SET ? WHERE sid=?";
+  const [results] = await db.query(sql, [req.body, req.params.sid]);
+  output.results = results;
+  if (results.affectedRows && results.changedRows) {
+    output.success = true;
+    output.type = "success";
+  } else if (results.affectedRows) {
+    output.error = "資料沒有修改";
+    output.type = "warning";
+  } else {
+    output.error = "資料修改發生錯誤";
+  }
+  res.json(output);
+});
+
 
 router.get("/escape", async (req, res) => {
   const str = "ab'c";

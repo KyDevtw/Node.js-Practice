@@ -18,6 +18,8 @@ const db = require(__dirname + "/modules/mysql2-connect"); // 引入資料庫
 
 const sessionStore = new MysqlStore({}, db); // 透過 MysqlStore 建立 sessionStore
 
+const cors = require("cors"); // require cors套件
+
 express.kurt = '卡特'; // js任何東西都可以動態設定，可以設定自己的屬性
 
 // const upload = require(__dirname + '/modules/upload-img'); 有了 upload-img.js 可以用這行取代下列三行
@@ -34,6 +36,15 @@ const moment = require('moment-timezone') // 載入 moment-timezone
 // 要放在所有路由之前
 app.set('view engine', 'ejs');
 // 如果資料夾名稱不用views 使用 app.set('views', __dirname + '/../資料夾名稱');
+
+
+const corsOptions = {
+    credentials: true,
+    origin: function(origin, cb){
+        cb(null, true);
+    }
+};
+app.use(cors());
 
 //! 設定session
 app.use(

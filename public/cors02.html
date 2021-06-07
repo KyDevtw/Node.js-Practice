@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+<button onclick="send()">send</button>
+
+    <script src="lib/jquery-3.6.0.js"></script>
+    <script>
+        const send = () => {
+                    // 測試時 這邊的 Domain 要跟實際執行的一樣
+                    fetch('http://localhost:3000/try-sess', {
+                        credentials: "include" // cross origin 傳送cookie
+                    });
+                .then(r => r.json())
+                    .then(data => {
+                        console.log(data);
+                });
+
+        };
+    </script>
+</body>
+
+</html>
