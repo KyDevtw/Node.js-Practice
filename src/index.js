@@ -19,6 +19,9 @@ const db = require(__dirname + "/modules/mysql2-connect"); // 引入資料庫
 const sessionStore = new MysqlStore({}, db); // 透過 MysqlStore 建立 sessionStore
 
 const cors = require("cors"); // require cors套件
+const Product = require("./models/Product");
+
+
 
 express.kurt = '卡特'; // js任何東西都可以動態設定，可以設定自己的屬性
 
@@ -169,14 +172,26 @@ app.post("/try-upload", upload.single("avatar"), async (req, res) => {
 });
 
 // 上傳多檔使用.array 第二個欄位為最大數量
-app.post("/try-uploads", upload.array("photo",6), (req, res) => {
-  console.log(req.files); // 使用複數 files
+app.post("/try-uploads", upload.array("photo", 6), async (req, res) => {
+  console.log(req.files);
+
+  let images = [];
+  if (req.files.length) {
+    images = req.files.map((el) => el.filename);
+  }
+
+  const p9 = await Product.getItem(9);
+  p9.data.images = JSON.stringify(images);
+
+  await p9.save();
+
   res.json({
-    file: req.files, // 使用複數 files
-    // 當表單還有其他文字欄位時可以包成一個object
+    files: req.files,
     body: req.body,
+    images,
   });
 });
+
 
 
 // 路由路徑一律使用 / 開頭
