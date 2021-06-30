@@ -183,9 +183,9 @@ app.post("/try-uploads", upload.array("photo",6), (req, res) => {
 // 原則上不會這樣使用
 app.get("/form01.html", (req, res) => {
   res.send("Fake html"); // 沒有使用樣板用send 送出html即可
-});
+}); 
 
-// 可以使用postman測試各種方法回傳的值
+//可以使用postman測試各種方法回傳的值
 app.post("/", (req, res) => {
   res.send("POST 你好");
 });
@@ -319,6 +319,7 @@ app.get("/try-db", (req, res) => {
 });
 
 app.use("/address-book", require(__dirname + "/routes/address-book"));
+app.use("/products", require(__dirname + "/routes/products"));
 
 // 自訂404頁面，放在路由開始後
 // node.js 路由先訂的優先所以 404 的定義要放在所有路由後
