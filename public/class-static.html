@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <div id="info"></div>
+
+
+    <script>
+        class User{
+
+            constructor(name){
+                this._name = name;
+                this._age = age;
+                User._total = User._total || 1;
+                User._total++;
+            }
+
+            // getter
+            get age(){
+                return  this._age;
+            }
+
+            set age(a){
+                this._age = a;
+            }
+
+            toJSON(){
+                return{
+                    name:this._name,
+                    age:this._age,
+                }
+            }
+            
+            toString(){
+                return JSON.stringify(this.toJSON());
+            }
+            }
+
+            // static getter 屬於這個類型的方法
+            static getCount(){
+                return User._total;
+            }
+        }
+
+        let u1 = new User('bill');
+        let u2 = new User('david');
+
+    </script>
+</body>
+</html>
