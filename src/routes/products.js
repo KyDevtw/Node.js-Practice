@@ -36,6 +36,8 @@ router.get("/add", async (req, res) => {
 
 // 取得單項商品
 router.get("/:sid", async (req, res) => {
+  let p = await Product.getRow(req.params.sid)
+  
   res.json([req.baseUrl, req.url]);
 });
 

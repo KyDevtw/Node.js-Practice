@@ -335,7 +335,7 @@ app.get("/try-db", (req, res) => {
 
 app.use("/address-book", require(__dirname + "/routes/address-book"));
 app.use("/products", require(__dirname + "/routes/products"));
-
+app.use("/cart", require(__dirname + "/routes/cart"));
 // 自訂404頁面，放在路由開始後
 // node.js 路由先訂的優先所以 404 的定義要放在所有路由後
 
